@@ -1,0 +1,25 @@
+name: Deploy to Server C
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH on Server C
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_C_HOST }}
+          username: "login5182"
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/html/gestion-TP2 
+            git pull origin main
+            composer install --no-dev --optimize-autoloader
+            php bin/console doctrine:migrations:migrate --no-interaction
+            php bin/console cache:clear
