@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration des utilisateurs{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Gestion des Utilisateurs</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Nom / Prénom</th>
+                <th>Email</th>
+                <th>Statut</th>
+                <th>Historique des Connexions</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.nom }} {{ user.prenom }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.isSuspended %}
+                        <span class="badge bg-danger">Suspendu</span>
+                    {% else %}
+                        <span class="badge bg-success">Actif</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <ul>
+                    {% for log in user.loginLogs %}
+                        <li>{{ log.loggedAt|date('d/m/Y H:i:s') }} (IP: {{ log.ipAddress }})</li>
+                    {% else %}
+                        <li><em>Aucune connexion enregistrée</em></li>
+                    {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <a href="{{ path('app_admin_toggle_suspend', {id: user.id}) }}" class="btn btn-sm btn-warning">
+                        {% if user.isSuspended %}Réactiver{% else %}Suspendre{% endif %}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

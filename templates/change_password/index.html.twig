@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Changer de mot de passe{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>Changer de mot de passe</h2>
+
+    {# Affichage des messages flash (succès / erreur) #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <form method="post">
+        <div class="mb-3">
+            <label for="new_password" class="form-label">Nouveau mot de passe :</label>
+            <input type="password" id="new_password" name="new_password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Valider</button>
+    </form>
+</div>
+{% endblock %}
