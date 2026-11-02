@@ -27,16 +27,26 @@ class ChangePasswordController extends AbstractController
         if ($request->isMethod('POST')) {
             $newPassword = $request->request->get('new_password');
 
-            // 1. On vérifie si le nouveau mot de passe a déjà été utilisé
+           // 1. On vérifie d'abord si le mot de passe respecte les critères de sécurité
+            // Contrainte : 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
+            $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/';
+            
+            if (!preg_match($regex, $newPassword)) {
+                $this->addFlash('danger', 'Le mot de passe doit contenir au moins 12 caractères, 
+                une majuscule, une minuscule, un chiffre et un caractère spécial.');
+                return $this->redirectToRoute('app_change_password');
+            }
+
+            // 2. On vérifie si le nouveau mot de passe a déjà été utilisé
             if ($historyManager->isPasswordAlreadyUsed($user, $newPassword)) {
                 $this->addFlash('danger', 'Vous ne pouvez pas réutiliser un ancien mot de passe !');
                 return $this->redirectToRoute('app_change_password');
             }
 
-            // 2. On enregistre le mot de passe actuel dans l'historique
+            // 3. On enregistre le mot de passe actuel dans l'historique
             $historyManager->logOldPassword($user);
 
-            // 3. On applique et hache le nouveau mot de passe
+            // 4. On applique et hache le nouveau mot de passe
             $hashedPassword = $hasher->hashPassword($user, $newPassword);
             $user->setPassword($hashedPassword);
 
