@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block title %}Modifier le profil{% endblock %}
+{% block body %}
+<div class="container mt-5">
+    <h1>Profil de {{ profileUser.prenom }} {{ profileUser.nom }}</h1>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {{ form_start(profileForm) }}
+        {{ form_widget(profileForm) }}
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    {{ form_end(profileForm) }}
+</div>
+{% endblock %}

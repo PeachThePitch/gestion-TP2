@@ -25,6 +25,10 @@ class ChangePasswordController extends AbstractController
         $user = $this->getUser();
 
         if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('change_password', $request->request->getString('_token'))) {
+                throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+            }
+
             $currentPassword = $request->request->getString('current_password');
             if ($currentPassword === '' || !$hasher->isPasswordValid($user, $currentPassword)) {
                 $this->addFlash('danger', 'Le mot de passe actuel est incorrect.');

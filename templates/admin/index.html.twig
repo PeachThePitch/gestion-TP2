@@ -42,9 +42,17 @@
                     </ul>
                 </td>
                 <td>
-                    <a href="{{ path('app_admin_toggle_suspend', {id: user.id}) }}" class="btn btn-sm btn-warning">
-                        {% if user.isSuspended %}Réactiver{% else %}Suspendre{% endif %}
-                    </a>
+                    <a href="{{ path('app_profile_edit', {id: user.id}) }}" class="btn btn-sm btn-primary">Modifier le profil et les rôles</a>
+                    <form method="post" action="{{ path('app_admin_toggle_suspend', {id: user.id}) }}" class="d-inline">
+                        <input type="hidden" name="_token" value="{{ csrf_token('suspend_' ~ user.id) }}">
+                        <button class="btn btn-sm btn-warning">{% if user.isSuspended %}Réactiver{% else %}Suspendre{% endif %}</button>
+                    </form>
+                    {% if user.id != app.user.id %}
+                        <form method="post" action="{{ path('app_admin_delete', {id: user.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer définitivement ce compte ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_' ~ user.id) }}">
+                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                        </form>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
