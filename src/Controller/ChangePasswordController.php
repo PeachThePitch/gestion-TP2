@@ -25,7 +25,13 @@ class ChangePasswordController extends AbstractController
         $user = $this->getUser();
 
         if ($request->isMethod('POST')) {
-            $newPassword = $request->request->get('new_password');
+            $currentPassword = $request->request->getString('current_password');
+            if ($currentPassword === '' || !$hasher->isPasswordValid($user, $currentPassword)) {
+                $this->addFlash('danger', 'Le mot de passe actuel est incorrect.');
+                return $this->redirectToRoute('app_change_password');
+            }
+
+            $newPassword = $request->request->getString('new_password');
 
            // 1. On vérifie d'abord si le mot de passe respecte les critères de sécurité
             // Contrainte : 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
