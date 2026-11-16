@@ -68,7 +68,7 @@ abstract class WebSecurityTestCase extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/change-password');
         self::assertResponseIsSuccessful();
-        $this->client->submit($crawler->selectButton('Valider')->form(['current_password' => $old, 'new_password' => $new]));
+        $this->client->submit($crawler->selectButton('Valider')->form(['current_password' => $old, 'new_password' => $new, 'confirm_new_password' => $new]));
     }
 
     protected function register(array $overrides = []): void
