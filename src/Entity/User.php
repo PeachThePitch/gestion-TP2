@@ -22,6 +22,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: "L'adresse email est obligatoire.")]
+    #[Assert\Email(message: "L'adresse email est invalide.")]
+    #[Assert\Length(max: 180)]
     private ?string $email = null;
 
     /**
@@ -38,18 +41,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le nom est obligatoire.")]
+    #[Assert\Length(max: 255)]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
+    #[Assert\Length(max: 255)]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "L'adresse est obligatoire.")]
+    #[Assert\Length(max: 255)]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "La ville est obligatoire.")]
+    #[Assert\Length(max: 255)]
     private ?string $ville = null;
 
     #[ORM\Column(length: 10)]
@@ -66,13 +73,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, PasswordHistory>
      */
-    #[ORM\OneToMany(targetEntity: PasswordHistory::class, mappedBy: 'user', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: PasswordHistory::class, mappedBy: 'user', cascade: ['remove'], orphanRemoval: true)]
     private Collection $passwordHistories;
 
     /**
      * @var Collection<int, LoginLog>
      */
-    #[ORM\OneToMany(targetEntity: LoginLog::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: LoginLog::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $loginLogs;
 
     public function __construct()
