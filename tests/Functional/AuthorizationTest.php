@@ -86,7 +86,7 @@ final class AuthorizationTest extends WebSecurityTestCase
         $form = $crawler->selectButton('Enregistrer')->form();
         $values = $form->getPhpValues();
         $values['profile_form']['prenom'] = 'Robert';
-        $values['profile_form']['roles'] = ['ROLE_USER', 'ROLE_ADMIN'];
+        $values['profile_form']['roles'] = ['ROLE_ADMIN'];
         $this->client->request('POST', $this->profileUrl('bob'), $values);
         self::assertResponseRedirects($this->profileUrl('bob'));
         self::assertSame('Robert', $this->user('bob')->getPrenom());
