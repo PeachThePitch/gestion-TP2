@@ -28,7 +28,9 @@ final class ProfileController extends AbstractController
             throw $this->createAccessDeniedException('Vous ne pouvez modifier que votre propre profil.');
         }
 
-        $form = $this->createForm(ProfileFormType::class, $user, ['can_manage_roles' => $isAdmin]);
+        $canManageRoles = $this->isGranted('ROLE_ADMIN') && $user->getId() !== $this->getUser()->getId();
+
+        $form = $this->createForm(ProfileFormType::class, $user, ['can_manage_roles' => $canManageRoles]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();

@@ -18,10 +18,10 @@ final class ProfileFormType extends AbstractType
         }
 
         // Cette option est déterminée côté serveur, jamais à partir de la requête.
-        if ($options['can_manage_roles']) {
+        if ($options['can_manage_roles'] ) {
             $builder->add('roles', ChoiceType::class, [
                 'label' => 'Rôles',
-                'choices' => ['Utilisateur' => 'ROLE_USER', 'Administrateur' => 'ROLE_ADMIN'],
+                'choices' => ['Administrateur' => 'ROLE_ADMIN'],
                 'multiple' => true,
                 'expanded' => true,
             ]);
