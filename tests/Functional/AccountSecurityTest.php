@@ -99,6 +99,37 @@ final class AccountSecurityTest extends WebSecurityTestCase
         self::assertResponseIsSuccessful();
     }
 
+    #[DataProvider('invalidConfirmations')]
+    public function testNewPasswordConfirmationIsRequired(?string $confirmation): void
+    {
+        $this->login();
+        $hash = $this->user('alice')->getPassword();
+        $crawler = $this->client->request('GET', '/change-password');
+        self::assertSelectorExists('input[name="confirm_new_password"][required]');
+        $values = $crawler->selectButton('Valider')->form([
+            'current_password' => self::ALICE_PASSWORD,
+            'new_password' => 'NextSecure84!Word',
+        ])->getPhpValues();
+        if ($confirmation === null) {
+            unset($values['confirm_new_password']);
+        } else {
+            $values['confirm_new_password'] = $confirmation;
+        }
+        $this->client->request('POST', '/change-password', $values);
+        self::assertResponseRedirects('/change-password');
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('.alert-danger', 'Les deux nouveaux mots de passe doivent être identiques.');
+        self::assertSame($hash, $this->user('alice')->getPassword());
+        self::assertSame(0, (int) $this->em()->getConnection()->fetchOne('SELECT COUNT(*) FROM password_history WHERE user_id = ?', [$this->ids['alice']]));
+    }
+
+    public static function invalidConfirmations(): iterable
+    {
+        yield 'différente' => ['DifferentSecure42!Word'];
+        yield 'vide' => [''];
+        yield 'absente de la requête' => [null];
+    }
+
     public function testPasswordChangeRequiresCsrf(): void
     {
         $this->login();

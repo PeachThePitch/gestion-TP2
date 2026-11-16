@@ -36,6 +36,11 @@ class ChangePasswordController extends AbstractController
             }
 
             $newPassword = $request->request->getString('new_password');
+            $confirmation = $request->request->getString('confirm_new_password');
+            if ($confirmation === '' || $newPassword !== $confirmation) {
+                $this->addFlash('danger', 'Les deux nouveaux mots de passe doivent être identiques.');
+                return $this->redirectToRoute('app_change_password');
+            }
 
            // 1. On vérifie d'abord si le mot de passe respecte les critères de sécurité
             // Contrainte : 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
